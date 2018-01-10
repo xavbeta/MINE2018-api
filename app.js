@@ -1,9 +1,7 @@
 var express = require('express');
 var app = express();
+var mysql = require('mysql');
 var mcache = require('memory-cache');
-const mysql = require('mysql');
-var async = require('asyncawait/async');
-var await = require('asyncawait/await');
 var define = require("node-constants")(exports);
 
 require('dotenv').load();

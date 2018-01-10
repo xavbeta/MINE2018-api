@@ -1,13 +1,13 @@
 {
   "name": "mine2018-api",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A simple API for MINE2018 project",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Saverio Delpriori <saverio.delpriori@uniurb.it>",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^4.0.0",
