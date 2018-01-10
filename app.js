@@ -182,7 +182,7 @@ app.use((req, res) => {
   res.status(404).send('') //not found
 })
 
-var checkDBConnection = () => connection.query('SELECT 1', (err,rows) => { if(err) throw err;	});
+var checkDBConnection = () => { connection.query('SELECT 1', (err,rows) => { if(err) throw err;	}); }
 
 // Start server and listen on http://localhost:8080/
 var server = app.listen(8080, function () {
