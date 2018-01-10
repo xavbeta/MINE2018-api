@@ -28,6 +28,7 @@ define({
 
 define('LONG_CACHE_DURATION', process.env.MINE_LONG_CACHE || 30);
 define('SHORT_CACHE_DURATION', process.env.MINE_SHORT_CACHE || 10);
+define('PORT', process.env.MINE_PORT || 8080);
 
 
 var cache = (duration) => {
@@ -185,7 +186,7 @@ app.use((req, res) => {
 var checkDBConnection = () => { connection.query('SELECT 1', (err,rows) => { if(err) throw err;	}); }
 
 // Start server and listen on http://localhost:8080/
-var server = app.listen(8080, function () {
+var server = app.listen(exports.PORT, function () {
     var host = server.address().address
     var port = server.address().port
 
