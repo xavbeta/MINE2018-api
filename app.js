@@ -7,7 +7,7 @@ var define = require("node-constants")(exports);
 require('dotenv').load();
 
 if(!process.env.MINE_HOST) { 
-    console.err('Environmental variables not set!');
+    console.error('Environmental variables not set!');
 	process.exit(1);
 }
 
@@ -20,7 +20,10 @@ define({
     TOP_URL_SHARE_QUERY: "SELECT ANY_VALUE(url) AS url, ANY_VALUE(created_time) AS created_at, MAX(share_count) AS max_reaction FROM mine.archive WHERE (TIME_TO_SEC(TIMEDIFF(NOW(), FROM_UNIXTIME(ANY_VALUE(`mine`.`archive`.`created_time`)))) / 60) < 10080 GROUP BY ogobjectid ORDER BY max_reaction DESC LIMIT 10;",
 	TOP_REDDIT_HOTNESS_QUERY: "SELECT url, created_time AS created_at, reddit_hotness_score FROM mine.top_reddit_hotness LIMIT 10;",
 	TOP_OVERALL_TRENDING_QUERY: "SELECT url, created_time AS created_at, url_trending_score AS overall_trending_score FROM mine.top_url_trending_score LIMIT 10;",
-	TOP_SOURCE_TRENDING_QUERY: "SELECT url, created_time AS created_at, source_trending_score FROM mine.top_source_trending_score LIMIT 10;"
+	TOP_SOURCE_TRENDING_QUERY: "SELECT url, created_time AS created_at, source_trending_score FROM mine.top_source_trending_score LIMIT 10;",
+	COUNT_OGOBJECTS_QUERY: "SELECT COUNT(*) AS c FROM ogobject;",
+	COUNT_SOURCES_QUERY: "SELECT COUNT(DISTINCT domain) AS c FROM archive;",
+	COUNT_OBSERVATIONS_QUERY: "SELECT COUNT(*) AS c FROM archive;"
 });
 
 
@@ -62,7 +65,7 @@ var resultQuery = (function(query_text) {
 	return new Promise((resolve, reject) => {
 		connection.query(query_text, (err,rows) => {	
 			if(err) {
-				log.fatal('Error', err);
+				console.error('Error', err);
 				return reject(err);
 			}
 			
@@ -176,6 +179,32 @@ app.get('/hotness', cache(exports.SHORT_CACHE_DURATION), function (req, res) {
 	});
 })
 
+
+app.get('/counts', cache(exports.SHORT_CACHE_DURATION), function (req, res) {
+	
+	var now = new Date().toISOString();
+	
+	var observations = resultQuery(exports.COUNT_OBSERVATIONS_QUERY);
+	var objects = resultQuery(exports.COUNT_OGOBJECTS_QUERY);
+	var sources = resultQuery(exports.COUNT_SOURCES_QUERY);
+	
+	var allPromise = Promise.all([observations, objects, sources]);
+	allPromise.then(function (data) {
+			console.log(data) // if
+			res.json({ 
+				datetime: now,
+				counts: {
+					observations:  data[0][0]['c'],
+					objects:  data[1][0]['c'],
+					sources:  data[2][0]['c'],
+				}
+			}); 
+		}, function (err) {
+			console.error(err) 
+			res.status(500).send('');
+	});
+	
+})
 
 app.use((req, res) => {
   res.status(404).send('') //not found
