@@ -190,7 +190,7 @@ app.get('/counts', cache(exports.SHORT_CACHE_DURATION), function (req, res) {
 	
 	var allPromise = Promise.all([observations, objects, sources]);
 	allPromise.then(function (data) {
-			console.log(data) // if
+			//console.log(data) // if
 			res.json({ 
 				datetime: now,
 				counts: {
