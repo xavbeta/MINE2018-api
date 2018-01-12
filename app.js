@@ -12,9 +12,9 @@ if(!process.env.MINE_HOST) {
 }
 
 define({
-    TOP_SOURCE_COMMENT_QUERY: "SELECT domain AS source, urls, AVG_reaction_count AS avg, STD_reaction_count AS std FROM weekly_source_analysis WHERE urls > 3 ORDER BY AVG_reaction_count DESC LIMIT 10;",
+    TOP_SOURCE_COMMENT_QUERY: "SELECT domain AS source, urls, AVG_comment_count AS avg, STD_comment_count AS std FROM weekly_source_analysis WHERE urls > 3 ORDER BY AVG_comment_count DESC LIMIT 10;",
     TOP_SOURCE_REACTION_QUERY: "SELECT domain AS source, urls, AVG_reaction_count AS avg, STD_reaction_count AS std FROM weekly_source_analysis WHERE urls > 3 ORDER BY AVG_reaction_count DESC LIMIT 10;" ,
-    TOP_SOURCE_SHARE_QUERY: "SELECT domain AS source, urls, AVG_reaction_count AS avg, STD_reaction_count AS std FROM weekly_source_analysis WHERE urls > 3 ORDER BY AVG_reaction_count DESC LIMIT 10;",
+    TOP_SOURCE_SHARE_QUERY: "SELECT domain AS source, urls, AVG_share_count AS avg, STD_share_count AS std FROM weekly_source_analysis WHERE urls > 3 ORDER BY AVG_share_count DESC LIMIT 10;",
 	TOP_URL_COMMENT_QUERY: "SELECT ANY_VALUE(url) AS url, ANY_VALUE(created_time) AS created_at, MAX(comment_count) AS max_reaction FROM mine.archive WHERE (TIME_TO_SEC(TIMEDIFF(NOW(), FROM_UNIXTIME(ANY_VALUE(`mine`.`archive`.`created_time`)))) / 60) < 10080 GROUP BY ogobjectid ORDER BY max_reaction DESC LIMIT 10;",
     TOP_URL_REACTION_QUERY: "SELECT ANY_VALUE(url) AS url, ANY_VALUE(created_time) AS created_at, MAX(reaction_count) AS max_reaction FROM mine.archive WHERE (TIME_TO_SEC(TIMEDIFF(NOW(), FROM_UNIXTIME(ANY_VALUE(`mine`.`archive`.`created_time`)))) / 60) < 10080 GROUP BY ogobjectid ORDER BY max_reaction DESC LIMIT 10;",
     TOP_URL_SHARE_QUERY: "SELECT ANY_VALUE(url) AS url, ANY_VALUE(created_time) AS created_at, MAX(share_count) AS max_reaction FROM mine.archive WHERE (TIME_TO_SEC(TIMEDIFF(NOW(), FROM_UNIXTIME(ANY_VALUE(`mine`.`archive`.`created_time`)))) / 60) < 10080 GROUP BY ogobjectid ORDER BY max_reaction DESC LIMIT 10;",
