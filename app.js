@@ -74,6 +74,14 @@ var resultQuery = (function(query_text) {
 	});
 });
 
+app.get('/cc', function (req, res) {
+	
+	mcache.clear();
+
+	res.json({"cache entries" : mcache.size()});
+	
+})
+
 app.get('/topdomains', cache(exports.LONG_CACHE_DURATION), function (req, res) {
 	
 	var now = new Date().toISOString();
