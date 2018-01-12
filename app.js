@@ -1,8 +1,8 @@
 var express = require('express');
 var app = express();
 var mysql = require('mysql');
-var mcache = require('memory-cache');
 var define = require("node-constants")(exports);
+var Client = require('node-rest-client').Client;
 
 require('dotenv').load();
 
@@ -26,31 +26,17 @@ define({
 	COUNT_OBSERVATIONS_QUERY: "SELECT COUNT(*) AS c FROM archive;"
 });
 
+define({
+	MYJSON_TOPDOMAINS: "n78qh",
+	MYJSON_TOPURLS: "sk56h",
+	MYJSON_HOTNESS: "ttd9l",
+	MYJSON_COUNTS: "j3kdl",
+})
+
 
 define('LONG_CACHE_DURATION', process.env.MINE_LONG_CACHE || 30);
 define('SHORT_CACHE_DURATION', process.env.MINE_SHORT_CACHE || 10);
 define('PORT', process.env.MINE_PORT || 8080);
-
-
-var cache = (duration) => {
-  return (req, res, next) => {
-    let key = '__express__' + req.originalUrl || req.url
-    let cachedBody = mcache.get(key)
-    if(cachedBody){
-		res.setHeader('content-type', 'text/json');
-		res.send(cachedBody)
-		return
-    }else{
-		res.sendResponse = res.send
-		res.send = (body) => {
-			mcache.put(key, body, duration * 1000);
-			res.setHeader('content-type', 'text/json');
-			res.sendResponse(body)
-		}
-		next()
-    }
-  }
-}
 
 
 const connection = mysql.createConnection({
@@ -74,15 +60,8 @@ var resultQuery = (function(query_text) {
 	});
 });
 
-app.get('/cc', function (req, res) {
-	
-	mcache.clear();
 
-	res.json({"cache entries" : mcache.size()});
-	
-})
-
-app.get('/topdomains', cache(exports.LONG_CACHE_DURATION), function (req, res) {
+app.get('/topdomains', function (req, res) {
 	
 	var now = new Date().toISOString();
 	
@@ -93,7 +72,7 @@ app.get('/topdomains', cache(exports.LONG_CACHE_DURATION), function (req, res) {
 	var allPromise = Promise.all([topReactions, topComments, topShares]);
 	allPromise.then(function (data) {
 			//console.log(data) // if
-			res.json({ 
+			var output = { 
 				datetime: now,
 				sources: {
 					share: {
@@ -109,7 +88,20 @@ app.get('/topdomains', cache(exports.LONG_CACHE_DURATION), function (req, res) {
 						record: data[2]
 					}
 				}
-			}); 
+			}
+
+			var client = new Client();
+			
+			var args = {
+				path: { "id": exports.MYJSON_TOPDOMAINS },
+				headers: { "Content-Type": "application/json" },
+				data: JSON.stringify(output)
+			};
+			
+			client.put("https://api.myjson.com/bins/${id}", args, function (data, response) {
+				res.json(output); 
+			});
+
 		}, function (err) {
 			console.error(err) 
 			res.status(500).send('');
@@ -117,7 +109,7 @@ app.get('/topdomains', cache(exports.LONG_CACHE_DURATION), function (req, res) {
 	
 })
 
-app.get('/topurls', cache(exports.LONG_CACHE_DURATION), function (req, res) {
+app.get('/topurls', function (req, res) {
 	
 	var now = new Date().toISOString();
 	
@@ -128,7 +120,7 @@ app.get('/topurls', cache(exports.LONG_CACHE_DURATION), function (req, res) {
 	var allPromise = Promise.all([topReactions, topComments, topShares]);
 	allPromise.then(function (data) {
 			//console.log(data) // if
-			res.json({ 
+			var output = { 
 				datetime: now,
 				urls: {
 					share: {
@@ -144,7 +136,20 @@ app.get('/topurls', cache(exports.LONG_CACHE_DURATION), function (req, res) {
 						record: data[2]
 					}
 				}
-			}); 
+			}
+
+			var client = new Client();
+			
+			var args = {
+				path: { "id": exports.MYJSON_TOPURLS },
+				headers: { "Content-Type": "application/json" },
+				data: JSON.stringify(output)
+			};
+			
+			client.put("https://api.myjson.com/bins/${id}", args, function (data, response) {
+				res.json(output); 
+			});
+
 		}, function (err) {
 			console.error(err) 
 			res.status(500).send('');
@@ -179,7 +184,7 @@ var formatSourceTrendingScore = function(rh) {
 	return rh;
 }
 
-app.get('/hotness', cache(exports.SHORT_CACHE_DURATION), function (req, res) {
+app.get('/hotness', function (req, res) {
 	
 	var	now = new Date().toISOString();
 	
@@ -190,7 +195,7 @@ app.get('/hotness', cache(exports.SHORT_CACHE_DURATION), function (req, res) {
 	var allPromise = Promise.all([redditTrending, overallTrending, sourceTrending]);
 	allPromise.then(function (data) {
 			//console.log(data) // if
-			res.json({ 
+			var output = { 
 				datetime: now,
 				trending_scores: {
 					reddit_hotness: {
@@ -206,7 +211,20 @@ app.get('/hotness', cache(exports.SHORT_CACHE_DURATION), function (req, res) {
 						record: formatSourceTrendingScore(data[2])
 					}
 				}
-			}); 
+			} 
+
+			var client = new Client();
+			
+			var args = {
+				path: { "id": exports.MYJSON_HOTNESS },
+				headers: { "Content-Type": "application/json" },
+				data: JSON.stringify(output)
+			};
+			
+			client.put("https://api.myjson.com/bins/${id}", args, function (data, response) {
+				res.json(output); 
+			});
+
 		}, function (err) {
 			console.error(err) 
 			res.status(500).send('');
@@ -214,7 +232,7 @@ app.get('/hotness', cache(exports.SHORT_CACHE_DURATION), function (req, res) {
 })
 
 
-app.get('/counts', cache(exports.SHORT_CACHE_DURATION), function (req, res) {
+app.get('/counts', function (req, res) {
 	
 	var now = new Date().toISOString();
 	
@@ -225,14 +243,28 @@ app.get('/counts', cache(exports.SHORT_CACHE_DURATION), function (req, res) {
 	var allPromise = Promise.all([observations, objects, sources]);
 	allPromise.then(function (data) {
 			//console.log(data) // if
-			res.json({ 
+			var output = { 
 				datetime: now,
 				counts: {
 					observations:  data[0][0]['c'],
 					objects:  data[1][0]['c'],
 					sources:  data[2][0]['c'],
 				}
-			}); 
+			};
+
+			var client = new Client();
+			
+			var args = {
+				path: { "id": exports.MYJSON_COUNTS },
+				headers: { "Content-Type": "application/json" },
+				data: JSON.stringify(output)
+			};
+			
+			client.put("https://api.myjson.com/bins/${id}", args, function (data, response) {
+				res.json(output); 
+			});
+			
+
 		}, function (err) {
 			console.error(err) 
 			res.status(500).send('');
