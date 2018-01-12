@@ -144,6 +144,33 @@ app.get('/topurls', cache(exports.LONG_CACHE_DURATION), function (req, res) {
 	
 })
 
+var formatRedditHotness = function(rh) {
+
+	rh.forEach(element => {
+		element.reddit_hotness_score = (parseFloat(element.reddit_hotness_score)/100).toFixed(4);
+	});
+
+	return rh;
+}
+
+var formatOverallTrendingScore = function(rh) {
+	
+	rh.forEach(element => {
+		element.overall_trending_score = (parseFloat(element.overall_trending_score)*1000).toFixed(2);
+	});
+	
+	return rh;
+}
+
+var formatSourceTrendingScore = function(rh) {
+	
+	rh.forEach(element => {
+		element.source_trending_score = (parseFloat(element.source_trending_score)*1000).toFixed(2);
+	});
+	
+	return rh;
+}
+
 app.get('/hotness', cache(exports.SHORT_CACHE_DURATION), function (req, res) {
 	
 	
@@ -155,21 +182,21 @@ app.get('/hotness', cache(exports.SHORT_CACHE_DURATION), function (req, res) {
 	
 	var allPromise = Promise.all([redditTrending, overallTrending, sourceTrending]);
 	allPromise.then(function (data) {
-			//console.log(data) // if
+			console.log(data) // if
 			res.json({ 
 				datetime: now,
 				trending_scores: {
 					reddit_hotness: {
 						name: 'Top 10 Reddit Hotness',
-						record: data[0]
+						record: formatRedditHotness(data[0])
 					},
 					overall_trending_score: {
 						name: 'Top 10 Overall Trending Score',
-						record: data[1]
+						record: formatOverallTrendingScore(data[1])
 					},
 					source_trending_score: {
 						name: 'Top 10 Source Trending Score',
-						record: data[2]
+						record: formatSourceTrendingScore(data[2])
 					}
 				}
 			}); 
