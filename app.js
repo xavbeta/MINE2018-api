@@ -75,7 +75,7 @@ app.get('/topdomains', function (req, res) {
 			var output = { 
 				datetime: now,
 				sources: {
-					share: {
+					reaction: {
 						name: 'Top 10 reactions',
 						record: data[0]
 					},
@@ -83,7 +83,7 @@ app.get('/topdomains', function (req, res) {
 						name: 'Top 10 commenti',
 						record: data[1]
 					},
-					reaction: {
+					share: {
 						name: 'Top 10 condivisioni',
 						record: data[2]
 					}
