@@ -1,4 +1,4 @@
-1 4 * * * root /usr/bin/curl -i http://localhost:8080/topurls >/tmp/topurls_cache.log 2>&1
-11 4 * * * root /usr/bin/curl -i http://localhost:8080/topdomains >/tmp/topdomains_cache.log 2>&1
-21 * * * * root /usr/bin/curl -i http://localhost:8080/hotness >/tmp/hotness_cache.log 2>&1
-15 * * * * root /usr/bin/curl -i http://localhost:8080/counts >/tmp/counts_cache.log 2>&1
+1 4 * * * /usr/bin/curl -i http://localhost:8080/topurls >/tmp/topurls_cache.log 2>&1
+11 4 * * * /usr/bin/curl -i http://localhost:8080/topdomains >/tmp/topdomains_cache.log 2>&1
+21 * * * * /usr/bin/curl -i http://localhost:8080/hotness >/tmp/hotness_cache.log 2>&1
+15 * * * * /usr/bin/curl -i http://localhost:8080/counts >/tmp/counts_cache.log 2>&1
