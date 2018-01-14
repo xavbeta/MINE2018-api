@@ -12,9 +12,8 @@ RUN apt-get install -y vim
 # where available (npm@5+)
 COPY package*.json ./
 
-COPY mine.cron /etc/cron.d/mine.cron
-RUN crontab /etc/cron.d/mine.cron
-RUN touch /tmp/cron.log
+COPY mine.cron /etc/cron.d/minecron
+RUN crontab /etc/cron.d/minecron
 
 RUN npm install
 # If you are building your code for production
