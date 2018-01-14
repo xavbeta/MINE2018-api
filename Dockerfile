@@ -5,6 +5,7 @@ WORKDIR /usr/src/app
 
 #install cron
 RUN apt-get update && apt-get install -y cron
+RUN apt-get install -y vim
 
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
