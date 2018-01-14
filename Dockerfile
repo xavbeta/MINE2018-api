@@ -18,11 +18,14 @@ RUN npm install
 # If you are building your code for production
 # RUN npm install --only=production
 
+RUN cron
+
 # Bundle app source
 COPY . .
 
 EXPOSE 8080
 EXPOSE 8087
 
+
 CMD [ "npm", "start" ]
-CMD [ "cron", "-f"]
+
