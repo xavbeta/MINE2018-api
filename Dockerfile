@@ -19,7 +19,7 @@ RUN npm install
 # If you are building your code for production
 # RUN npm install --only=production
 
-RUN cron && tail -f /tmp/cron.log
+RUN service cron start
 
 # Bundle app source
 COPY . .
