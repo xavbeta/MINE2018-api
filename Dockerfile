@@ -24,6 +24,7 @@ RUN cron && tail -f /tmp/cron.log
 # Bundle app source
 COPY . .
 
+# Expose external ports
 EXPOSE 8080
 EXPOSE 8087
 
