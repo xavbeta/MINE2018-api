@@ -23,5 +23,6 @@ COPY . .
 
 EXPOSE 8080
 EXPOSE 8087
-CMD [ "cron", "-f" ]
+
 CMD [ "npm", "start" ]
+CMD [ "cron"]
