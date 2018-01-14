@@ -13,7 +13,8 @@ RUN apt-get install -y vim
 COPY package*.json ./
 
 COPY mine.cron /etc/cron.d/minecron
-RUN crontab /etc/cron.d/minecron
+RUN chmod 0644 /etc/cron.d/cool-task
+#RUN crontab /etc/cron.d/minecron
 
 RUN npm install
 # If you are building your code for production
