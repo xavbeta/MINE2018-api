@@ -13,6 +13,7 @@ COPY package*.json ./
 
 COPY mine.cron /etc/cron.d/mine.cron
 RUN crontab /etc/cron.d/mine.cron
+RUN touch /tmp/cron.log
 
 RUN npm install
 # If you are building your code for production
